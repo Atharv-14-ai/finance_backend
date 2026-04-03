@@ -1,0 +1,25 @@
+import { Router } from "express";
+import {
+  create,
+  getAll,
+  update,
+  remove,
+} from "../controllers/record.controller";
+import { authenticate } from "../middlewares/auth.middleware";
+import { authorizeRoles } from "../middlewares/role.middleware";
+
+const router = Router();
+
+// Create → ADMIN only
+router.post("/", authenticate, authorizeRoles("ADMIN"), create);
+
+// Read → ANALYST + ADMIN
+router.get("/", authenticate, authorizeRoles("ADMIN", "ANALYST"), getAll);
+
+// Update → ADMIN only
+router.patch("/:id", authenticate, authorizeRoles("ADMIN"), update);
+
+// Delete → ADMIN only
+router.delete("/:id", authenticate, authorizeRoles("ADMIN"), remove);
+
+export default router;
